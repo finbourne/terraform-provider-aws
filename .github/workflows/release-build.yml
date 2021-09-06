@@ -1,0 +1,51 @@
+name: release-build
+
+# NOTE:
+#  For this action to be triggered (if using the release-tag workflow)
+#  you will need to ensure that the release-tag workflow is using a custom token
+#  that has permission to start workflows.
+#  See: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.17
+        id: go
+
+      - name: Configure
+        run: mkdir -p ${{ github.workspace }}/artifacts/binaries
+
+      - name: Build terraform-provider-aws-darwin-amd64
+        run: GOARCH=amd64 GOOS=darwin go build -o ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-darwin-amd64 -v .
+      - name: Build terraform-provider-aws-linux-amd64
+        run: GOARCH=amd64 GOOS=linux go build -o ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-linux-amd64 -v .
+      - name: Build terraform-provider-aws-windows-amd64
+        run: GOARCH=amd64 GOOS=windows go build -o ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-windows-amd64.exe -v .
+      - name: Build terraform-provider-aws-linux-amd64-static-linked
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -a -ldflags="-w -s" -o ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-linux-amd64-static-linked -v .
+
+      - uses: shogo82148/actions-upload-release-asset@v1.2.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-darwin-amd64
+      - uses: shogo82148/actions-upload-release-asset@v1.2.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-linux-amd64
+      - uses: shogo82148/actions-upload-release-asset@v1.2.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-windows-amd64.exe
+      - uses: shogo82148/actions-upload-release-asset@v1.2.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ github.workspace }}/artifacts/binaries/terraform-provider-aws-linux-amd64-static-linked
