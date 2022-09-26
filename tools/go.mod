@@ -4,12 +4,16 @@ go 1.15
 
 require (
 	github.com/bflad/tfproviderdocs v0.9.1
+	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/client9/misspell v0.3.4
 	github.com/golangci/golangci-lint v1.42.0
+	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-changelog v0.0.0-20201005170154-56335215ce3a
+	github.com/hashicorp/terraform-exec v0.14.0 // indirect
 	github.com/katbyte/terrafmt v0.3.0
 	github.com/pavius/impi v0.0.3
-	github.com/terraform-linters/tflint v0.30.0
+	github.com/terraform-linters/tflint v0.41.0
+	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 )
 
 replace github.com/katbyte/terrafmt => github.com/gdavison/terrafmt v0.3.1-0.20210204054728-84242796be99
